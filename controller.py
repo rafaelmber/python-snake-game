@@ -5,6 +5,7 @@ from typing import Tuple
 from game_board import GameBoard
 from snake import Snake
 from food import Food
+from view import View
 
 class Controller():
     def __init__(self, screen_width: int, screen_height: int, cell_size: int) -> None:
@@ -15,6 +16,7 @@ class Controller():
         self._snake: Snake = Snake(initial_position=(10,10), initial_length=3, cell_size=cell_size)
         self._game_board: GameBoard = GameBoard(screen_width, screen_height, cell_size)
         self._food: Food = Food()
+        self._view: View = View()
 
         self._current_state = "PLAYING"
 
@@ -55,10 +57,9 @@ class Controller():
             if user_input == 'ESCAPE':
                 self._current_state = 'PLAYING'
         
-        elif self._current_state == 'LOSE':
-            print('You lose')
+        elif self._current_state == 'END_GAME':
             if user_input == 'ESCAPE':
-                pygame.quit()
+                pygame.display.quit()
 
     def check_collision(self) -> None:
         if self._snake.check_collision_with_food(self._food):
@@ -67,12 +68,17 @@ class Controller():
             self._score += 1
         if self._snake.check_collision_with_self():
             # Lose
-            self._current_state = 'LOSE'
+            self._current_state = 'END_GAME'
     
     def draw(self, screen: pygame.Surface):
-        screen.fill((0,0,0))
 
-        self._game_board.draw(screen, self._score)
-        self._snake.draw(screen, self._cell_size)
-        self._food.draw(screen, self._cell_size)
+        if self._current_state == 'PLAYING':
+            screen.fill((0,0,0))
+
+            self._food.draw(screen, self._cell_size)
+            self._snake.draw(screen, self._cell_size)
+            self._game_board.draw(screen, self._score)
+
+        elif self._current_state == 'END_GAME':
+            self._view.draw(screen, self._score)
 

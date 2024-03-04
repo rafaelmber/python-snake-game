@@ -15,7 +15,9 @@ class GameBoard:
         text = f'Score: {score}'
         text_surface = font.render(text, True, (255, 255, 255))
 
-        screen.blit(text_surface, (window_size[0] // 2, 1))
+        text_xpos = (window_size[0] - text_surface.get_width()) // 2
+
+        screen.blit(text_surface, (text_xpos, 1))
 
     def place_food(self, x: int, y: int) -> None:
         self._board[y][x] = 2
